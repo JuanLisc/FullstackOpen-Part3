@@ -1,6 +1,10 @@
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
+const dotenv = require('dotenv');
+dotenv.config();
+const Person = require('./models/person');
+
 const app = express();
 
 app.use(cors());
@@ -53,7 +57,9 @@ const logger = morgan(function (tokens, req, res) {
 app.use(logger);
 
 app.get('/api/persons', (req, res) => {
-  res.json(phonebook);
+  Person.find({}).then(people => {
+    res.json(people);
+  });
 });
 
 app.get('/info', (req, res) => {
@@ -80,27 +86,31 @@ app.post('/api/persons', (req, res) => {
     });
   }
 
-  if (phonebook.find(person => person.name === body.name)) {
-    return res.status(400).json({
-      error: 'This person already exists in phonebok'
+  const person = new Person({
+    ...body
+  });
+
+  person
+    .save()
+    .then(savedPerson => {
+      res.json(savedPerson);
     });
-  }
+});
 
-  const person = {
-    ...body,
-    id: getRandomInt(100)
-  };
-
-  phonebook = phonebook.concat(person);
-
-  res.json(person);
+app.delete('/api/persons/:id', (request, response, next) => {
+  const {id} = request.params;
+  Person.findByIdAndRemove(id)
+    .then(result => {
+      response.status(204).end();
+    })
+    .catch(error => next(error));
 });
 
 const getRandomInt = (max) => {
   return Math.floor(Math.random() * max);
 };
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

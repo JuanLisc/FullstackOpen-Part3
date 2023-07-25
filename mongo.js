@@ -25,9 +25,9 @@ if (process.argv.length === 3) {
     console.log('Phonebook:');
     result.forEach(person => {
       console.log(person.name, person.number);
-    })
+    });
     mongoose.connection.close();
-  })
+  });
 }
 
 const person = new Person({
@@ -35,6 +35,7 @@ const person = new Person({
   number: process.argv[4]
 });
 
+// eslint-disable-next-line no-unused-vars
 person.save().then(result => {
   console.log(`Added ${person.name} ${person.number} to phonebook.`);
   mongoose.connection.close();

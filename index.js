@@ -11,6 +11,7 @@ app.use(cors());
 app.use(express.static('build'));
 app.use(express.json());
 
+// eslint-disable-next-line no-unused-vars
 morgan.token('body', function(req, res) {
   return JSON.stringify(req.body);
 });
@@ -47,7 +48,7 @@ app.get('/info', (req, res) => {
 });
 
 app.get('/api/persons/:id', (req, res, next) => {
-  const {id} = req.params;
+  const { id } = req.params;
   Person.findById(id)
     .then(person => {
       if (person) {
@@ -82,8 +83,8 @@ app.post('/api/persons', (req, res, next) => {
 
 app.put('/api/persons/:id', (req, res, next) => {
   const body = req.body;
-  const {id} = req.params;
-  
+  const { id } = req.params;
+
   const person = {
     name: body.name,
     number: body.number
@@ -97,8 +98,9 @@ app.put('/api/persons/:id', (req, res, next) => {
 });
 
 app.delete('/api/persons/:id', (req, res, next) => {
-  const {id} = req.params;
+  const { id } = req.params;
   Person.findByIdAndRemove(id)
+    // eslint-disable-next-line no-unused-vars
     .then(result => {
       res.status(204).end();
     })
